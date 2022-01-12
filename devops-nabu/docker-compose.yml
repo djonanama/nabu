@@ -1,0 +1,36 @@
+version: '3.8'
+
+networks:
+    nabu:
+        driver: bridge
+
+services:
+    mongo0:
+        networks:
+            - nabu
+        hostname: mongo0
+        container_name: mongo0
+        image: mongo
+        restart: always
+        ports:
+            - 27017:27017
+        volumes:
+            - ./mongo-rc1:/data/db
+        # command: ["--bind_ip", "0.0.0.0", "--port", "27017", "--replSet", "rs0"]
+
+    postgresql:
+        networks:
+            - nabu
+        hostname: pgsql
+        container_name: postgresql
+        image: postgres:14.1
+        shm_size: 1g
+        restart: always
+        ports:
+            - 4432:5432
+        environment:
+            - POSTGRES_DB=gas_db
+            - POSTGRES_USER=gas_db
+            - POSTGRES_PASSWORD=gas_db_qwerty123
+        volumes:
+            - ./pgsql/data:/var/lib/postgresql/data

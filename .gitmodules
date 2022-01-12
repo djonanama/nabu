@@ -1,0 +1,13 @@
+[submodule "nabu-back"]
+    path = back-end-api
+    url = https://github.com/djonanama/nabu-back.git
+[submodule "nabu-front"]
+    path = front-end
+    url = https://github.com/djonanama/nabu-front.git
+[submodule "legal-etl"]
+    path = legal-etl
+    url = https://github.com/djonanama/legal-etl.git
+
+
+
+    sudo cp -r /home/djonanama/Documents/dev/nabu/devops-nabu/pgsql/data

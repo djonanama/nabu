@@ -1,0 +1,15 @@
+{
+    "sqltools.connections": [
+        {
+            "previewLimit": 50,
+            "server": "localhost",
+            "port": 4432,
+            "driver": "PostgreSQL",
+            "name": "POSTGRES_NABU",
+            "database": "gas_db",
+            "username": "gas_db",
+            "password": "gas_db_qwerty123"
+        }
+    ],
+    "git.ignoreLimitWarning": true
+}
