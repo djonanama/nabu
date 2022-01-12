@@ -7,7 +7,3 @@
 [submodule "legal-etl"]
     path = legal-etl
     url = https://github.com/djonanama/legal-etl.git
-
-
-
-    sudo cp -r /home/djonanama/Documents/dev/nabu/devops-nabu/pgsql/data
