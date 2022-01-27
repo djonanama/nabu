@@ -9,6 +9,26 @@
             "database": "gas_db",
             "username": "gas_db",
             "password": "gas_db_qwerty123"
+        },
+        {
+            "port": 4123,
+            "previewLimit": 50,
+            "driver": "ClickHouse",
+            "password": "ICAr8T73ah",
+            "database": "nabu",
+            "username": "nabu",
+            "server": "localhost",
+            "name": "networks-nabu"
+        },
+        {
+            "port": 4123,
+            "previewLimit": 50,
+            "driver": "ClickHouse",
+            "password": "ICAr8T73ah",
+            "database": "information_schema",
+            "username": "nabu",
+            "server": "localhost",
+            "name": "networks-INFORMATION_SCHEMA"
         }
     ],
     "git.ignoreLimitWarning": true

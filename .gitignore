@@ -5,3 +5,4 @@ legal-etl
 /**/node_modules
 devops-nabu/mongo-rc1
 devops-nabu/pgsql
+devops-nabu/clickhouse

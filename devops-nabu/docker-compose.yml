@@ -13,10 +13,18 @@ services:
         image: mongo
         restart: always
         ports:
-            - 27017:27017
+            - 4017:27017
+        # environment:
+        # - MONGO_INITDB_ROOT_USERNAME=root
+        # - MONGO_INITDB_ROOT_PASSWORD=root
+        # - MONGO_INITDB_DATABASE=nabu_app
+        # - MONGO_INITDB_USER=nabu_app
+        # - MONGO_INITDB_PWD=yvekF33A
         volumes:
             - ./mongo-rc1:/data/db
         # command: ["--bind_ip", "0.0.0.0", "--port", "27017", "--replSet", "rs0"]
+
+        # mongodb://nabu_app:yvekF33A@localhost:4017/nabu_app
 
     postgresql:
         networks:
@@ -34,3 +42,24 @@ services:
             - POSTGRES_PASSWORD=gas_db_qwerty123
         volumes:
             - ./pgsql/data:/var/lib/postgresql/data
+
+    clickhouse:
+        networks:
+            - nabu
+        hostname: chbd
+        container_name: clickhouse
+        image: yandex/clickhouse-server:22.1.2.2
+        restart: always
+        ports:
+            - 4123:8123
+        environment:
+            - CLICKHOUSE_DB=nabu
+            - CLICKHOUSE_USER=nabu
+            - CLICKHOUSE_PASSWORD=ICAr8T73ah
+        volumes:
+            - ./clickhouse/data:/var/lib/clickhouse
+
+#  clickhouse://nabu:ICAr8T73ah@localhost:4123/nabu
+#  "clickhouse://epavlov:ICAr8T73ah@http://clickhouse-server:8123/epavlov_mip"
+
+# 21.11.5
