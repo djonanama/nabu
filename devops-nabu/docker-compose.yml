@@ -26,22 +26,22 @@ services:
 
         # mongodb://nabu_app:yvekF33A@localhost:4017/nabu_app
 
-    postgresql:
-        networks:
-            - nabu
-        hostname: pgsql
-        container_name: postgresql
-        image: postgres:14.1
-        shm_size: 1g
-        restart: always
-        ports:
-            - 4432:5432
-        environment:
-            - POSTGRES_DB=gas_db
-            - POSTGRES_USER=gas_db
-            - POSTGRES_PASSWORD=gas_db_qwerty123
-        volumes:
-            - ./pgsql/data:/var/lib/postgresql/data
+    # postgresql:
+    #     networks:
+    #         - nabu
+    #     hostname: pgsql
+    #     container_name: postgresql
+    #     image: postgres:14.1
+    #     shm_size: 1g
+    #     restart: always
+    #     ports:
+    #         - 4432:5432
+    #     environment:
+    #         - POSTGRES_DB=gas_db
+    #         - POSTGRES_USER=gas_db
+    #         - POSTGRES_PASSWORD=gas_db_qwerty123
+    #     volumes:
+    #         - ./pgsql/data:/var/lib/postgresql/data
 
     clickhouse:
         networks:
@@ -58,6 +58,63 @@ services:
             - CLICKHOUSE_PASSWORD=ICAr8T73ah
         volumes:
             - ./clickhouse/data:/var/lib/clickhouse
+
+    backend: 
+        networks:
+            - nabu
+        hostname: backend
+        container_name: backend
+        depends_on:
+            - clickhouse
+            - mongo0
+        tty: true
+        build:
+            context: ../back-end-api
+            dockerfile: Dockerfile
+        restart: always 
+        ports:
+            - 8082:8081
+        environment:
+            - NODE_ENV=no_production
+            - PORT=8081
+            - MONGO_PORT=27017
+            - MONGO_HOST=mongo0
+            - CH_URL=http://chbd
+            - CH_PORT=8123
+        command: yarn start 
+
+    webserver-nabu:
+        networks:
+            - nabu
+        depends_on:
+            - backend
+        container_name: webserver-nabu
+        image: nginx:latest
+        restart: always 
+        ports:
+            - "80:80"
+            - "443:443"
+        volumes:
+            - ../front-end/dist:/var/www/html
+            - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+            # - ./nginx/nginx.conf.prod:/etc/nginx/nginx.conf:ro
+            - ./letsencrypt:/etc/letsencrypt
+        # command: sh /src/nginx/nginx-conf/run_nginx.sh
+
+
+    # certbot:
+    #     networks:
+    #         - nabu
+    #     depends_on:
+    #         - webserver-nabu
+    #     image: certbot/certbot
+    #     volumes:
+    #         - ./letsencrypt:/etc/letsencrypt
+    #         - ../front-end/dist:/var/www/html
+    #         - ./log/letsencrypt:/var/log/letsencrypt
+    #     command: certonly --email the-horae@protonmail.com --agree-tos --no-eff-email --webroot -w /var/www/html -d nabu.link -d www.nabu.link
+    #     entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
+
 
 #  clickhouse://nabu:ICAr8T73ah@localhost:4123/nabu
 #  "clickhouse://epavlov:ICAr8T73ah@http://clickhouse-server:8123/epavlov_mip"

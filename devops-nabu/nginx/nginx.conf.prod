@@ -1,0 +1,51 @@
+user nginx;
+worker_processes  1;
+
+events {
+    worker_connections  1024;
+}
+
+http {
+        server {
+                listen 80;
+                listen 443 ssl;
+
+                server_name nabu.link www.nabu.link;
+
+                ssl_certificate /etc/letsencrypt/live/nabu.link/fullchain.pem;
+                ssl_certificate_key /etc/letsencrypt/live/nabu.link/privkey.pem;
+                ssl_trusted_certificate /etc/letsencrypt/live/nabu.link/chain.pem;
+
+                if ($server_port = 80) { set $https_redirect 1; }
+                if ($host ~ '^www\.') { set $https_redirect 1; }
+                if ($https_redirect = 1) { return 301 https://nabu.link$request_uri; }
+
+                location / {
+                    root /var/www/html;
+                    index index.html;
+                    include  /etc/nginx/mime.types;
+                    try_files $uri $uri/ /index.html;
+                }
+
+                location ~ /.well-known/acme-challenge {
+                        allow all;
+                        root /var/www/html;
+                }
+
+
+                location /api/  {
+                        proxy_set_header X-Real-IP $remote_addr;
+                        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                        proxy_set_header Host $http_host;
+                        proxy_set_header X-NginX-Proxy true;
+
+                        proxy_pass http://backend:8081;
+
+                        proxy_redirect off;
+
+                        proxy_http_version 1.1;
+                        proxy_set_header Upgrade $http_upgrade;
+                        proxy_set_header Connection "upgrade";
+                }
+        }
+}
